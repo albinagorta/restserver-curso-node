@@ -1,33 +1,29 @@
-require('./config/config')
-const express = require('express')
-const bodyParser = require('body-parser')
-const app = express()
+require('./config/config');
+const express = require('express');
+const mongoose = require('mongoose');
+const bodyParser = require('body-parser');
+const app = express();
 
 
 // parse application/x-www-form-urlencoded
-app.use(bodyParser.urlencoded({ extended: false }))
-    // parse application/json
-app.use(bodyParser.json())
+app.use(bodyParser.urlencoded({ extended: false }));
+// parse application/json
+app.use(bodyParser.json());
 
-app.get('/usuario', function(req, res) {
-    res.json('get peticion')
-})
+app.use(require('./routes/usuario'));
 
-app.post('/usuario', function(req, res) {
 
-    let body = req.body;
-    res.json({ body })
-})
-app.put('/usuario/:id', function(req, res) {
-    let id = req.params.id;
-    res.json({
-        id
-    })
-})
-app.delete('/usuario', function(req, res) {
-    res.json('delete peticion')
-})
+mongoose.connect(process.env.urlDB, {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+        useFindAndModify: false,
+        useCreateIndex: true
+    },
+    (err, res) => {
+        if (err) throw err;
+        console.log("Base de datos en linea");
+    });
 
 app.listen(process.env.PORT, () => {
     console.log('Escuchando puerto', process.env.PORT);
-})
+});
